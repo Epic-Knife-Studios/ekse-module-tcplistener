@@ -1,0 +1,44 @@
+apply plugin: 'java'
+defaultTasks 'build'
+
+def epicknife = "http://www.epicknife.com/"
+def mod_name = "tcplistener"
+def mod_version = 0
+def ekse_version = 1
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: '../lib', include: '*.jar')
+}
+
+compileJava {
+    println "Checking EKSE Core..."
+    def f = new File("../lib/epicknife-server-${ekse_version}.jar")
+    if(!f.exists())
+    {
+        f.mkdirs();
+        f.delete();
+        println "EKSE Core missing!  Downloading..."
+        new URL(
+            "${epicknife}epicknife/server/epicknife-server-${ekse_version}.jar"
+        ).withInputStream{ i -> f.withOutputStream{ it << i }}
+    }
+    else
+    {
+        println "Found!"
+    }
+    println "Compiling '${mod_name}' v${mod_version}"
+}
+
+jar {
+    baseName = mod_name
+    version = mod_version
+    archiveName = "${baseName}-${version}.jar"
+}
